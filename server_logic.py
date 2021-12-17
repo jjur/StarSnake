@@ -319,11 +319,14 @@ def choose_move(data: dict) -> str:
         # there is not much we can do, brace for impact and go in random direction
         return random.choice(start_state.generate_successors()).last_action
     else:
-        threads = find_snakes_around(d[1].head, data["you"]["head"])
-        if threads:
-            obstacles = obstacles + threads
-            start_state = GameNode(data["you"]["head"], data["you"]["body"], )
-            a, b, c, d, e = findFood(start_state, h1)
-            print("A-star STATS:", a, b, c, e)
+        try:
+            threads = find_snakes_around(d[1].head, data["you"]["head"])
+            if threads:
+                obstacles = obstacles + threads
+                start_state = GameNode(data["you"]["head"], data["you"]["body"], )
+                a, b, c, d, e = findFood(start_state, h1)
+                print("A-star STATS:", a, b, c, e)
+        except:
+            pass
 
     return d[1].last_action
