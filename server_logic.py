@@ -134,9 +134,7 @@ def h1(node):
     no food available, return 9999
     """
     shortest_distance = 9999
-    if len(data_copy["board"]["food"]):
-        data_copy["board"]["food"].append({"x": data_copy["board"]["width"]//2,
-                                           "y":data_copy["board"]["height"]//2})
+
 
     for food in data_copy["board"]["food"]:
         distance = abs(food["x"]-node.head["x"])+abs(food["y"]-node.head["y"])
@@ -220,7 +218,7 @@ def findFood(state, heuristic):
         current_node = heapq.heappop(frontier)
 
         # Check if we reached the final node:
-        if current_node.head in FINAL or emergency_brake > 2000:
+        if current_node.head in FINAL or emergency_brake > 1500:
             
             # Yay we reached the end
             # Return all interesting variables
@@ -311,7 +309,12 @@ def choose_move(data: dict) -> str:
     print(f"All board data this turn: {data}")
     global obstacles
     obstacles = find_obstacles(data)
+
     start_state = GameNode(data["you"]["head"],data["you"]["body"],)
+
+    if len(data["board"]["food"])==0:
+        #There is no food there si nothing else to do
+        return random.choice(start_state.generate_successors()).last_action
 
     a1,b1,c1,d1,e1 = findFood(start_state, h1)
     print("A-star STATS:",a1,b1,c1,e1)
@@ -328,5 +331,8 @@ def choose_move(data: dict) -> str:
                 print("A-star STATS:", a, b, c, e)
         except:
             pass
+    try:
 
-    return d1[1].last_action
+        return d1[1].last_action
+    except IndexError:
+        return random.choice(start_state.generate_successors()).last_action
