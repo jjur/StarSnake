@@ -134,7 +134,10 @@ def h1(node):
     no food available, return 9999
     """
     shortest_distance = 9999
-    
+    if len(data_copy["board"]["food"]):
+        data_copy["board"]["food"].append({"x": data_copy["board"]["width"]//2,
+                                           "y":data_copy["board"]["height"]//2})
+
     for food in data_copy["board"]["food"]:
         distance = abs(food["x"]-node.head["x"])+abs(food["y"]-node.head["y"])
         if distance < shortest_distance:
