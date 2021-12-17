@@ -218,7 +218,7 @@ def findFood(state, heuristic):
         current_node = heapq.heappop(frontier)
 
         # Check if we reached the final node:
-        if current_node.head in FINAL or emergency_brake > 700:
+        if current_node.head in FINAL or emergency_brake > 2700:
             
             # Yay we reached the end
             # Return all interesting variables
