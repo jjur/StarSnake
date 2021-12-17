@@ -30,7 +30,6 @@ def is_valid_move(data, obstacles, proposed_move):
     if proposed_move["x"]==board_width or proposed_move["y"]==board_height:
         return False
 
-    
     if proposed_move in obstacles:
         return False
     return True
@@ -218,7 +217,7 @@ def findFood(state, heuristic):
         current_node = heapq.heappop(frontier)
 
         # Check if we reached the final node:
-        if current_node.head in FINAL or emergency_brake > 2700:
+        if current_node.head in FINAL or emergency_brake > 2000:
             
             # Yay we reached the end
             # Return all interesting variables
@@ -261,6 +260,32 @@ def findFood(state, heuristic):
     return None, None, None, None, -1
 
 
+def find_snakes_around(coor, previous_coor):
+    """Identifies enemy snakes that can reach the point"""
+    global data_copy
+    threads = []
+    for snake in data_copy["board"]["snakes"]:
+        other  = snake["head"]
+        me = coor
+        # We are also appearing in list of snakes
+        if other != previous_coor:
+            if abs(other["x"]-coor["x"]) + abs(other["y"]-coor["y"]) ==1:
+                # High risk of colision
+                if len(snake["body"]) < len(data_copy["you"]["body"]):
+                    # Snake is smaler, we do not care.
+                    pass
+                else:
+                    # Snake is equal or larger, we really do care
+                    # lets run away
+                    # Is the enemy snake interested in going here?
+                    start_state = GameNode(snake["head"], snake["body"], )
+
+                    a, b, c, d, e = findFood(start_state, h1)
+                    if coor == d[1].head:
+                        # There is going to be serious colission
+                        threads.append(coor)
+
+    return threads
 
 
 
@@ -289,10 +314,13 @@ def choose_move(data: dict) -> str:
     print("A-star STATS:",a,b,c,e)
     if d is None:
         # there is not much we can do, brace for impact and go in random direction
-        random.choice(start_state.generate_successors()).last_action
+        return random.choice(start_state.generate_successors()).last_action
     else:
-
-        print(d[1].last_action)
-
+        threads = find_snakes_around(d[1].head, data["you"]["head"])
+        if threads:
+            obstacles = obstacles + threads
+            start_state = GameNode(data["you"]["head"], data["you"]["body"], )
+            a, b, c, d, e = findFood(start_state, h1)
+            print("A-star STATS:", a, b, c, e)
 
     return d[1].last_action
