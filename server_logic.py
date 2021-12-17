@@ -287,7 +287,12 @@ def choose_move(data: dict) -> str:
 
     a,b,c,d,e = findFood(start_state, h1)
     print("A-star STATS:",a,b,c,e)
-    print(d[1].last_action)
+    if d is None:
+        # there is not much we can do, brace for impact and go in random direction
+        random.choice(start_state.generate_successors()).last_action
+    else:
+
+        print(d[1].last_action)
 
 
     return d[1].last_action
